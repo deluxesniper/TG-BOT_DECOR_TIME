@@ -3,7 +3,7 @@ from aiogram.types import Message
 from Keyboard.inline import info_inline, info_company
 from aiogram.filters import Command
 from aiogram.types import CallbackQuery
-from configs.config import city, adress
+from configs.config import city, address
 
 router = Router()
 
@@ -13,11 +13,6 @@ async def start(message: Message):
 Cebos Color, Valpaint, San Marco, Ticiana Deluxe, Werth Deco и представитель лакокрасочной продукции Flugger.\n\nМожете ознакомиться с моими функциями ниже""", reply_markup=info_inline())
 
 
-
-@router.callback_query(F =="locations")
-async def location(call: CallbackQuery):
-    await call.answer()
-    await call.message.edit_text(f'Наш адресс: {city}, {adress}')
 
 
 
