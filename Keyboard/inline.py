@@ -1,4 +1,3 @@
-from gc import callbacks
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 

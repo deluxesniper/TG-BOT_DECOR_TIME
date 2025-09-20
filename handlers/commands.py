@@ -1,6 +1,8 @@
-from aiogram import Router
-from aiogram.types import Message, CallbackQuery, FSInputFile
+from aiogram import Router ,F
+from aiogram.types import Message
+from Keyboard.inline import info_inline
 from aiogram.filters import Command
+from aiogram.types import CallbackQuery
 
 router = Router()
 
