@@ -122,4 +122,4 @@ credentials.py
 *.pem
 
 # Project specific (добавьте ваши специфичные файлы)
-configs/config.py  # если храните токены в конфиге
+  # если храните токены в конфиге
