@@ -3,7 +3,6 @@ from aiogram.types import Message
 from Keyboard.inline import info_inline, info_company
 from aiogram.filters import Command
 from aiogram.types import CallbackQuery
-from configs.config import city, address
 
 router = Router()
 

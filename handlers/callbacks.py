@@ -2,8 +2,10 @@ from gc import callbacks
 
 from aiogram import F, Router
 from aiogram.types import CallbackQuery, Message
-from Keyboard.inline import info_company
-from configs.config import city, address
+from Keyboard.inline import info_company, info_stor
+from stor.contacts import XL_city, XL_email, XL_phone,XL_opening_hours,XL_address
+
+
 
 router = Router()
 
@@ -13,7 +15,16 @@ async def info(call:CallbackQuery):
     await call.answer()
     await call.message.edit_reply_markup("Вы выбрали информацию о нас, выберите что хотите знать",reply_markup=info_company())
 
-@router.callback_query(F.data =="location")
+
+
+@router.callback_query(F.data =="Locations")
 async def location(call:CallbackQuery):
+    await  call.answer()
+    await call.message.answer(f"Наш адрес: {XL_city} {XL_address}\n время работы: {XL_opening_hours}\n телефон: {XL_phone}\n EMAIL@: {XL_email}")
+
+
+
+@router.callback_query(F.data =="stors")
+async def stors(call:CallbackQuery):
     await call.answer()
-    await call.message.edit_reply_markup(callbacks.from_user.id ,"Наш Адресс:{city},{address}",reply_markup=info_company())
+    await call.message.answer("Адреса наших магазинов",reply_markup=info_stor())

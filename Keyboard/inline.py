@@ -9,15 +9,21 @@ def info_inline():
     ]
     keyboard=InlineKeyboardMarkup(inline_keyboard=kb_list)
     return keyboard
+
+
+
 def info_company():
     kb_list=[
-        [InlineKeyboardButton(text="Где мы находимся",callback_data='Locations'),
-         InlineKeyboardButton(text="Как с нами связаться?",callback_data='email_telefon')],
-        [InlineKeyboardButton(text="Время работы", callback_data='Hours_opening')]
-
+        [
+          InlineKeyboardButton(text="Где мы находимся",callback_data='Locations'),
+          InlineKeyboardButton(text="Наши магазины", callback_data='stors')
+        ]
     ]
     info_keyboard=InlineKeyboardMarkup(inline_keyboard=kb_list)
     return info_keyboard
+
+
+
 def formula_racheta():
     kb_list=[
         [InlineKeyboardButton(text="Рассчет штукатурки",callback_data='plaster'),
@@ -25,3 +31,13 @@ def formula_racheta():
         ],
         [InlineKeyboardButton(text="Рассчет грунтовки",callback_data='primers')]
     ]
+
+
+
+def info_stor():
+    kb_list=[
+        [InlineKeyboardButton(text="Галерея интерьеров «Твинстор",callback_data='Twinstor')]
+
+    ]
+    stor_keyboard=InlineKeyboardMarkup(inline_keyboard=kb_list)
+    return stor_keyboard
