@@ -2,7 +2,7 @@ from gc import callbacks
 
 from aiogram import F, Router
 from aiogram.types import CallbackQuery, Message
-from Keyboard.inline import info_company, info_stor
+from Keyboard.inline import info_company, info_stor,fact_again
 from services.gpt_random_fact import get_fact
 from stor.contacts import XL_city, XL_email, XL_phone,XL_opening_hours,XL_address
 
@@ -33,7 +33,7 @@ async def stors(call:CallbackQuery):
 
 
 @router.callback_query(F.data =="random_fact")
-async def random_nandler(call:CallbackQuery):
+async def random_handler(call:CallbackQuery):
     await call.answer('Щас раскажу как появились краски, каждая история рандомна',show_alert=True)
     fact = await get_fact()
-    await call.message.answer(f'Факт: {fact}')
+    await call.message.answer(f'Факт: {fact}',reply_markup=fact_again())

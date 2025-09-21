@@ -46,3 +46,10 @@ def info_stor():
     ]
     stor_keyboard=InlineKeyboardMarkup(inline_keyboard=kb_list)
     return stor_keyboard
+
+def fact_again():
+    kb_list=[
+        [InlineKeyboardButton(text="Еще один факт",callback_data='again_fact')]
+    ]
+    keyboard=InlineKeyboardMarkup(inline_keyboard=kb_list)
+    return keyboard
