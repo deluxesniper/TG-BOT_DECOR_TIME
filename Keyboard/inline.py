@@ -15,7 +15,7 @@ def info_inline():
 def info_company():
     kb_list=[
         [
-          InlineKeyboardButton(text="Где мы находимся",callback_data='Locations'),
+          InlineKeyboardButton(text="Главный офис",callback_data='Locations'),
           InlineKeyboardButton(text="Наши магазины", callback_data='stors')
         ]
     ]
