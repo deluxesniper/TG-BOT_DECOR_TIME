@@ -1,9 +1,11 @@
+import json
 import asyncio
 from aiogram import Bot, Dispatcher, F
 from configs.config import TOKEN
 from handlers import router
 import logging
 
+TOKEN="7973844976:AAGfVsCnykq8IqnCZKiaiz4Mzu77ODX4nlA"
 
 async def main():
     logging.basicConfig(level=logging.INFO)

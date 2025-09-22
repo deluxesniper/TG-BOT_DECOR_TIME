@@ -1,21 +1,28 @@
 from gc import callbacks
 
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import State, StatesGroup
 from aiogram import F, Router
 from aiogram.types import CallbackQuery, Message, FSInputFile
-from Keyboard.inline import info_company, info_stor,fact_again
-from Keyboard.reply import under_the_menu
+from Keyboard.inline import info_company, info_stor,fact_again,paint_to_calculate
+from Keyboard.reply import under_the_menu,my_advertisement
 from services.gpt_random_fact import get_fact
 from stor.contacts import XL_city, XL_email, XL_phone,XL_opening_hours,XL_address
 
-
+class AdvertisementStates(StatesGroup):
+    waiting_for_text = State()
 
 router = Router()
 
+@router.callback_query(F.data=="Raschet")
+async def paint_to_calculate_handler(call: CallbackQuery):
+    await call.answer()
+    await call.message.answer("Вы хотите рассчитать количество не обходимой объёма краски, лака или грунтовки, тогда выберите нужную",reply_markup=paint_to_calculate())
 
 @router.callback_query(F.data=="info")
 async def info(call:CallbackQuery):
     await call.answer()
-    await call.message.edit_reply_markup("Вы выбрали информацию о нас, выберите что хотите знать",reply_markup=info_company())
+    await call.message.answer("Вы выбрали информацию о нас, выберите что хотите знать",reply_markup=info_company())
 
 
 
@@ -44,6 +51,13 @@ async def random_handler(call:CallbackQuery):
 @router.message(F.text == "Объявления")
 async def menu_handler(message: Message):
     await message.answer("Что хотите сделать: создать или просмотреть ваши объявления",reply_markup=under_the_menu())
+
+
+
+@router.message(F.text =="Создать Объявление")
+async def under_menu_handler(message: Message):
+    await message.answer("Напишите свое объявление и нажмите кнопку отправить",reply_markup=my_advertisement())
+
 
 
 

@@ -18,7 +18,19 @@ def under_the_menu():
     ]
     keyboard = ReplyKeyboardMarkup(
         keyboard=kb_list,
-        resize_keyboard=True,  # автоматическое изменение размера
-        one_time_keyboard=True  # скрыть после использования
+        resize_keyboard=True,
+        one_time_keyboard=True
+    )
+    return keyboard
+
+def my_advertisement():
+    kb_list = [
+        [KeyboardButton(text="Отправить"),
+         KeyboardButton(text="Не отправлять")],
+    ]
+    keyboard = ReplyKeyboardMarkup(
+        keyboard=kb_list,
+        resize_keyboard=True,
+        one_time_keyboard=True
     )
     return keyboard

@@ -17,6 +17,18 @@ def info_inline():
 
 
 
+def paint_to_calculate():
+    kb_list=[
+        [InlineKeyboardButton(text='Грунт Adhesive ',callback_data='adhesive'),
+         InlineKeyboardButton(text='Штукатурка GRANELLA ',callback_data='granella')],
+        [
+            InlineKeyboardButton(text='Лак КRAFT PRO MATT ', callback_data='kraft_pro_matt'),
+            InlineKeyboardButton(text='Лак Durata ', callback_data='durata')
+        ]
+    ]
+    keyboard=InlineKeyboardMarkup(inline_keyboard=kb_list)
+    return keyboard
+
 def info_company():
     kb_list=[
         [
@@ -29,7 +41,7 @@ def info_company():
 
 
 
-def formula_racheta():
+def paint_racheta():
     kb_list=[
         [InlineKeyboardButton(text="Рассчет штукатурки",callback_data='plaster'),
          InlineKeyboardButton(text="Рассчет лака", callback_data='varnish')
