@@ -11,6 +11,7 @@ from stor.contacts import XL_city, XL_email, XL_phone,XL_opening_hours,XL_addres
 
 class AdvertisementStates(StatesGroup):
     waiting_for_text = State()
+from handlers.states import Calcs_adhesive,Calcs_granella
 
 router = Router()
 
@@ -18,6 +19,46 @@ router = Router()
 async def paint_to_calculate_handler(call: CallbackQuery):
     await call.answer()
     await call.message.answer("Вы хотите рассчитать количество не обходимой объёма краски, лака или грунтовки, тогда выберите нужную",reply_markup=paint_to_calculate())
+
+
+@router.callback_query(F.data=="adhesive")
+async def calculate_plaster_handler(call: CallbackQuery, state: FSMContext):
+    await call.message.answer("Введите площадь помещения в м²")
+    await state.set_state(Calcs_adhesive.waiting)
+    await call.answer()
+
+@ router.message(Calcs_adhesive.waiting)
+async def process_adhesive_area(message: Message, state: FSMContext):
+            adhesive = float(message.text)
+            adhesive_consumption = 7.5  # расход грунтовки
+            result = adhesive / adhesive_consumption
+
+            await message.answer(
+                f"С вашей площадью {adhesive} м²\n"
+                f"Вам потребуется: {result:.2f} литров грунтовки\n"
+                f"Расход: {adhesive_consumption} м²/литр"
+            )
+            await state.clear()
+
+
+@router.callback_query(F.data=="granella")
+async def calculate_plaster_handler(call: CallbackQuery, state: FSMContext):
+    await call.message.answer("Введите площадь помещения в м²")
+    await state.set_state(Calcs_granella.waiting)
+    await call.answer()
+
+@ router.message(Calcs_granella.waiting)
+async def process_adhesive_area(message: Message, state: FSMContext):
+            granella = float(message.text)
+            granella_consumption = 4  # расход грунтовки
+            result = granella / granella_consumption
+
+            await message.answer(
+                f"С вашей площадью {granella} м²\n"
+                f"Вам потребуется: {result:.2f} литров грунтовки\n"
+                f"Расход: {granella_consumption} м²/литр"
+            )
+            await state.clear()
 
 @router.callback_query(F.data=="info")
 async def info(call:CallbackQuery):
