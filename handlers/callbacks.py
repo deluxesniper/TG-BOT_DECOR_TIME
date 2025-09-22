@@ -1,8 +1,9 @@
 from gc import callbacks
 
 from aiogram import F, Router
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import CallbackQuery, Message, FSInputFile
 from Keyboard.inline import info_company, info_stor,fact_again
+from Keyboard.reply import under_the_menu
 from services.gpt_random_fact import get_fact
 from stor.contacts import XL_city, XL_email, XL_phone,XL_opening_hours,XL_address
 
@@ -34,6 +35,26 @@ async def stors(call:CallbackQuery):
 
 @router.callback_query(F.data =="random_fact")
 async def random_handler(call:CallbackQuery):
-    await call.answer('Щас раскажу как появились краски, каждая история рандомна',show_alert=True)
+    await call.answer('Щас расскажу как появились краски, каждая история отличается от другой',show_alert=True)
     fact = await get_fact()
     await call.message.answer(f'Факт: {fact}',reply_markup=fact_again())
+
+
+
+@router.message(F.text == "Объявления")
+async def menu_handler(message: Message):
+    await message.answer("Что хотите сделать: создать или просмотреть ваши объявления",reply_markup=under_the_menu())
+
+
+
+@router.message(F.photo)
+async def photo(message:Message):
+    await message.answer(f"Я получил от вас фотографию")
+    img = FSInputFile('media/img')
+
+
+
+@router.message(F.voice)
+async def voice(message:Message):
+    await message.answer(f" Вы отправили Голосовое сообщение")
+
