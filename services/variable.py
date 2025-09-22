@@ -10,7 +10,7 @@ async def Adhesive_calculate(message:types.Message, state:FSMContext, Adhesive:f
     area = 35
     result = area / Adhesive
     print(result)
-    await message.answer(f"С вашей площадью {area} м²\n Вам потребуется <UNK>: {result:2f}Литров грунтовки \n рассход {Adhesive}м²/литр")
+    await message.answer(f"С вашей площадью {area} м²\n Вам потребуется : {result:2f} Литров грунтовки \n рассход {Adhesive}м²/литр")
     await state.clear()
     return result
 

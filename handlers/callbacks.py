@@ -28,9 +28,9 @@ async def calculate_plaster_handler(call: CallbackQuery, state: FSMContext):
     await call.answer()
 
 @ router.message(Calcs_adhesive.waiting)
-async def process_adhesive_area(message: Message, state: FSMContext):
+async def formula_adhesive(message: Message, state: FSMContext):
             adhesive = float(message.text)
-            adhesive_consumption = 7.5  # расход грунтовки
+            adhesive_consumption = 7.5
             result = adhesive / adhesive_consumption
 
             await message.answer(
@@ -47,10 +47,10 @@ async def calculate_plaster_handler(call: CallbackQuery, state: FSMContext):
     await state.set_state(Calcs_granella.waiting)
     await call.answer()
 
-@ router.message(Calcs_granella.waiting)
-async def process_adhesive_area(message: Message, state: FSMContext):
+@router.message(Calcs_granella.waiting)
+async def formula_granella(message: Message, state: FSMContext):
             granella = float(message.text)
-            granella_consumption = 4  # расход грунтовки
+            granella_consumption = 4
             result = granella / granella_consumption
 
             await message.answer(
@@ -59,6 +59,8 @@ async def process_adhesive_area(message: Message, state: FSMContext):
                 f"Расход: {granella_consumption} м²/литр"
             )
             await state.clear()
+
+
 
 @router.callback_query(F.data=="info")
 async def info(call:CallbackQuery):
