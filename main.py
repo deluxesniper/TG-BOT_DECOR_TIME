@@ -5,7 +5,6 @@ from handlers import router
 import logging
 
 
-
 async def main():
     logging.basicConfig(level=logging.INFO)
     dp = Dispatcher()
