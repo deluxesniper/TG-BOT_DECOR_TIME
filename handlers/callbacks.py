@@ -11,7 +11,7 @@ from stor.contacts import XL_city, XL_email, XL_phone,XL_opening_hours,XL_addres
 
 class AdvertisementStates(StatesGroup):
     waiting_for_text = State()
-from handlers.states import Calcs_adhesive,Calcs_granella
+from hanndlers.states import Calcs_adhesive,Calcs_granella,
 
 router = Router()
 
@@ -57,6 +57,27 @@ async def formula_granella(message: Message, state: FSMContext):
                 f"С вашей площадью {granella} м²\n"
                 f"Вам потребуется: {result:.2f} литров грунтовки\n"
                 f"Расход: {granella_consumption} м²/литр"
+            )
+            await state.clear()
+
+
+
+@router.callback_query(F.data=="kraft_pro_matt")
+async def calculate_plaster_handler(call: CallbackQuery, state: FSMContext):
+    await call.message.answer("Введите площадь помещения в м²")
+    await state.set_state(Calcs_granella.waiting)
+    await call.answer()
+
+@router.message(Calcs_granella.waiting)
+async def formula_granella(message: Message, state: FSMContext):
+            kraft_pro_matt = float(message.text)
+            kraft_pro_matt_consumption = 4
+            result = kraft_pro_matt / kraft_pro_matt_consumption
+
+            await message.answer(
+                f"С вашей площадью {kraft_pro_matt} м²\n"
+                f"Вам потребуется: {result:.2f} литров грунтовки\n"
+                f"Расход: {kraft_pro_matt} м²/литр"
             )
             await state.clear()
 

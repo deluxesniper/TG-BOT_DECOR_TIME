@@ -12,5 +12,11 @@ class Users(StatesGroup):
 class Calcs_adhesive(StatesGroup):
     waiting = State()
 
+
+
 class Calcs_granella(StatesGroup):
+    waiting = State()
+
+
+class Calcs_raft_pro_matt(StatesGroup):
     waiting = State()
