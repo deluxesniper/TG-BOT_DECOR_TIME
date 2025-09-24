@@ -2,6 +2,12 @@ from gc import callbacks
 from services.dialogs import PERSONS
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
+
+
+####$$НАчало inlane menu
+
+
+
 def info_inline():
     kb_list=[
         [
@@ -23,6 +29,14 @@ def info_inline():
 
 
 
+####$$конец inlane menu
+
+
+
+####$$НАчало menu  для рассчета красок
+
+
+
 def paint_to_calculate():
     kb_list=[
         [InlineKeyboardButton(text='Грунт Adhesive ',callback_data='adhesive'),
@@ -34,6 +48,13 @@ def paint_to_calculate():
     ]
     keyboard=InlineKeyboardMarkup(inline_keyboard=kb_list)
     return keyboard
+
+
+####$$Конец menu  для рассчета красок
+
+
+####$$НАчало menu  про магазины
+
 
 def info_company():
     kb_list=[
@@ -65,12 +86,15 @@ def info_stor():
     stor_keyboard=InlineKeyboardMarkup(inline_keyboard=kb_list)
     return stor_keyboard
 
+
+
 def fact_again():
     kb_list=[
         [InlineKeyboardButton(text="Еще один факт",callback_data='again_fact')]
     ]
     keyboard=InlineKeyboardMarkup(inline_keyboard=kb_list)
     return keyboard
+
 
 
 def get_persons_keyboard():

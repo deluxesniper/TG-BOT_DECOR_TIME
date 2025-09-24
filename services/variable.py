@@ -7,21 +7,7 @@ Granella = 4
 Kraft_pro_matt = 10
 Durata = 10
 
-async def Adhesive_calculate(message:types.Message, state:FSMContext, Adhesive:float):
-    area = 35
-    result = area / Adhesive
-    print(result)
-    await message.answer(f"С вашей площадью {area} м²\n Вам потребуется : {result:2f} Литров грунтовки \n рассход {Adhesive}м²/литр")
-    await state.clear()
-    return result
 
-async def Granella_calculate(message:types.Message, state:FSMContext, Granella:float):
-    area = 35
-    result = area / Granella
-    print(result)
-    await message.answer(f"С вашей площадью {area} м²\n Вам потребуется <UNK>: {result:2f}Литров грунтовки \n рассход {Granella}м²/литр")
-    await state.clear()
-    return result
 
 
 def save_message(message_data):
@@ -52,3 +38,29 @@ def save_message(message_data):
             json.dump([message_data], f, ensure_ascii=False, indent=4)
 
 
+def load_messages():
+    filename = "json/messages.json"
+    try:
+        # Проверяем существование файла
+        if not os.path.exists(filename):
+            print("Файл не существует")
+            return []
+
+        # Пытаемся прочитать существующие данные
+        with open(filename, 'r', encoding='utf-8') as f:
+            content = f.read().strip()
+            if not content:  # Если файл пустой
+                print("Файл пустой")
+                return []
+
+            # Загружаем JSON данные
+            messages = json.loads(content)
+            print(f"Успешно загружено {len(messages)} объявлений")
+            return messages
+
+    except json.JSONDecodeError as e:
+        print(f"Ошибка декодирования JSON: {e}")
+        return []
+    except Exception as e:
+        print(f"Ошибка при чтении файла: {e}")
+        return []

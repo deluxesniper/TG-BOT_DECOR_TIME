@@ -14,5 +14,13 @@
         "city": "4",
         "announcement": "5",
         "payment": "6"
+    },
+    {
+        "user_for_text": "жорик",
+        "name": "жора",
+        "age": "7 месяцев",
+        "city": "моква",
+        "announcement": "люблю косточки",
+        "payment": "1"
     }
 ]

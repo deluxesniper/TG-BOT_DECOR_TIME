@@ -9,17 +9,21 @@ from Keyboard.reply import under_the_menu, my_advertisement, save_or_clear
 from services.dialogs import dialogis, PERSONS
 from services.gpt_random_fact import get_fact
 from stor.contacts import XL_city, XL_email, XL_phone,XL_opening_hours,XL_address
-from services.variable import save_message
+from services.variable import save_message, load_messages
 class AdvertisementStates(StatesGroup):
     waiting_for_text = State()
 from handlers.states import Calcs_adhesive, Calcs_granella, Calcs_kraft_pro_matt, Calcs_Durata, Create_Users_messages
 
 router = Router()
+###____ КОД для Inlane кeyboards  расчета
+
+
 
 @router.callback_query(F.data=="Raschet")
 async def paint_to_calculate_handler(call: CallbackQuery):
     await call.answer()
     await call.message.answer("Вы хотите рассчитать количество не обходимой объёма краски, лака или грунтовки, тогда выберите нужную",reply_markup=paint_to_calculate())
+
 
 
 @router.callback_query(F.data=="adhesive")
@@ -28,7 +32,9 @@ async def calculate_Priming_Adhesive_handler(call: CallbackQuery, state: FSMCont
     await state.set_state(Calcs_adhesive.waiting)
     await call.answer()
 
-@ router.message(Calcs_adhesive.waiting)
+
+
+@router.message(Calcs_adhesive.waiting)
 async def formula_adhesive(message: Message, state: FSMContext):
             adhesive = float(message.text)
             adhesive_consumption = 7.5
@@ -42,24 +48,22 @@ async def formula_adhesive(message: Message, state: FSMContext):
             await state.clear()
 
 
+
 @router.callback_query(F.data=="granella")
 async def calculate_plaster_handler(call: CallbackQuery, state: FSMContext):
     await call.message.answer("Введите площадь помещения в м²")
     await state.set_state(Calcs_granella.waiting)
     await call.answer()
 
+
+
 @router.message(Calcs_granella.waiting)
 async def formula_granella(message: Message, state: FSMContext):
-            granella = float(message.text)
-            granella_consumption = 4
-            result = granella / granella_consumption
-
-            await message.answer(
-                f"С вашей площадью {granella} м²\n"
-                f"Вам потребуется: {result:.2f} литров штукатурки Granella\n"
-                f"Расход: {granella_consumption} м²/литр"
-            )
-            await state.clear()
+    granella = float(message.text)
+    granella_consumption = 4
+    result = granella / granella_consumption
+    await message.answer(f"С вашей площадью {granella} м²\n Вам потребуется: {result:.2f} литров штукатурки Granella\n Расход: {granella_consumption} м²/литр")
+    await state.clear()
 
 
 
@@ -69,18 +73,15 @@ async def calculate_varnish_handler(call: CallbackQuery, state: FSMContext):
     await state.set_state(Calcs_kraft_pro_matt.waiting)
     await call.answer()
 
+
+
 @router.message(Calcs_kraft_pro_matt.waiting)
 async def formula_kraft_pro_matt(message: Message, state: FSMContext):
-            kraft_pro_matt = float(message.text)
-            kraft_pro_matt_consumption = 10
-            result = kraft_pro_matt / kraft_pro_matt_consumption
-
-            await message.answer(
-                f"С вашей площадью {kraft_pro_matt} м²\n"
-                f"Вам потребуется: {result:.2f} литров  лака Kraft pro matt\n"
-                f"Расход: {kraft_pro_matt_consumption} м²/литр"
-            )
-            await state.clear()
+    kraft_pro_matt = float(message.text)
+    kraft_pro_matt_consumption = 10
+    result = kraft_pro_matt / kraft_pro_matt_consumption
+    await message.answer(f"С вашей площадью {kraft_pro_matt} м²\n Вам потребуется: {result:.2f} литров  лака Kraft pro matt\n Расход: {kraft_pro_matt_consumption} м²/литр")
+    await state.clear()
 
 
 
@@ -90,18 +91,23 @@ async def calculate_varnish_handler(call: CallbackQuery, state: FSMContext):
     await state.set_state(Calcs_Durata.waiting)
     await call.answer()
 
+
+
 @router.message(Calcs_Durata.waiting)
 async def formula_durata(message: Message, state: FSMContext):
-            durata = float(message.text)
-            durata_consumption = 10
-            result = durata / durata_consumption
+    durata = float(message.text)
+    durata_consumption = 10
+    result = durata / durata_consumption
+    await message.answer(f"С вашей площадью {durata} м²\n Вам потребуется: {result:.2f} литров  лака Durata\n Расход: {durata_consumption} м²/литр")
+    await state.clear()
 
-            await message.answer(
-                f"С вашей площадью {durata} м²\n"
-                f"Вам потребуется: {result:.2f} литров  лака Durata\n"
-                f"Расход: {durata_consumption} м²/литр"
-            )
-            await state.clear()
+
+
+###____ Конец Keybords рассчета
+
+
+
+####_____ Начало Keybords stors
 
 
 
@@ -126,13 +132,25 @@ async def stors(call:CallbackQuery):
 
 
 
+####_____Конец Keyboards stors
+
+
+
+######_______ Начало Keybords фактов
+
+
+
 @router.callback_query(F.data =="random_fact")
 async def random_handler(call:CallbackQuery):
     await call.answer('Щас расскажу как появились краски, каждая история отличается от другой',show_alert=True)
     fact = await get_fact()
     await call.message.answer(f'Факт: {fact}',reply_markup=fact_again())
 
+######_______ Конец Keyboards Фактов
 
+
+
+#######_________ Начало Keyboards replay  advertisements
 
 @router.message(F.text == "Объявления")
 async def menu_handler(message: Message):
@@ -179,7 +197,7 @@ async def create_city_handler(message: Message,state: FSMContext):
 
 
 
-# Шаг 6: Сохраняем текст объявления и запрашиваем цену
+
 @router.message(Create_Users_messages.announcement, F.text)
 async def create_announcement_handler(message: Message, state: FSMContext):
     await state.update_data(announcement=message.text)  # ✅
@@ -233,6 +251,41 @@ async def handle_invalid_confirmation(message: Message, state: FSMContext):
     await message.answer("Пожалуйста, выберите действие с помощью кнопок:", reply_markup=save_or_clear())
 
 
+@router.message(F.text == "Мои Объявления")
+async def show_my_advertisements(message: Message):
+    # Загружаем все объявления
+    advertisements = load_messages()
+
+    if not advertisements:
+        await message.answer("У вас пока нет сохраненных объявлений.", reply_markup=under_the_menu())
+        return
+
+    # Показываем все объявления
+    for i, ad in enumerate(advertisements, 1):
+        ad_text = (
+                f"📋 Объявление #{i}\n\n"
+                f"📌 Заголовок: {ad.get('user_for_text', 'Не указано')}\n"
+                f"👤 Имя: {ad.get('name', 'Не указано')}\n"
+                f"🎂 Возраст: {ad.get('age', 'Не указано')}\n"
+                f"🏙️ Город: {ad.get('city', 'Не указано')}\n"
+                f"📝 Текст объявления: {ad.get('announcement', 'Не указано')}\n"
+                f"💰 Цена: {ad.get('payment', 'Не указано')}\n"
+
+        )
+        await message.answer(ad_text)
+
+    await message.answer(f"📊 Всего объявлений: {len(advertisements)}", reply_markup=under_the_menu())
+
+
+
+#######_________ Конец  Keyboards replay  advertisements _____заметка подучить функции JSON
+
+
+
+#######@@@_________ Start Keyboards dialogs
+
+
+
 @router.callback_query(F.data=="Dialog")
 async def talk_dialog(call: CallbackQuery, state: FSMContext):
     await call.message.answer("Диалог с известной личностью",reply_markup=get_persons_keyboard())
@@ -243,9 +296,7 @@ async def talk_dialog(call: CallbackQuery, state: FSMContext):
 async def select_persons_handler(call: CallbackQuery):
     select_persons=call.data.split(":")[1]
     dialogis[call.message.from_user.id] = [{'role':'system','content':PERSONS[select_persons]}]
-
     await call.message.answer(f'Ты выбрал {select_persons} можешь пообщатся с ним')
     await call.answer()
 
 
-п
