@@ -4,10 +4,10 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram import F, Router
 from aiogram.types import CallbackQuery, Message, FSInputFile, ReplyKeyboardRemove
-from Keyboard.inline import info_company, info_stor,fact_again,paint_to_calculate
+from Keyboard.inline import info_company, info_stor,fact_again,paint_to_calculate,get_persons_keyboard
 from Keyboard.reply import under_the_menu, my_advertisement, save_or_clear
+from services.dialogs import dialogis, PERSONS
 from services.gpt_random_fact import get_fact
-from services.json import save_advertisement
 from stor.contacts import XL_city, XL_email, XL_phone,XL_opening_hours,XL_address
 from services.variable import save_message
 class AdvertisementStates(StatesGroup):
@@ -234,7 +234,17 @@ async def handle_invalid_confirmation(message: Message, state: FSMContext):
 
 
 @router.callback_query(F.data=="Dialog")
-async def talk_dialog(message: Message, state: FSMContext):
-    await message.answer("<UNK> <UNK> <UNK> <UNK> <UNK>")
+async def talk_dialog(call: CallbackQuery, state: FSMContext):
+    await call.message.answer("Диалог с известной личностью",reply_markup=get_persons_keyboard())
+
+
+
+@router.callback_query(F.data.startswith('select_persons:'))
+async def select_persons_handler(call: CallbackQuery):
+    select_persons=call.data.split(":")[1]
+    dialogis[call.message.from_user.id] = [{'role':'system','content':PERSONS[select_persons]}]
+
+    await call.message.answer(f'Ты выбрал {select_persons} можешь пообщатся с ним')
+    await call.answer()
 
 

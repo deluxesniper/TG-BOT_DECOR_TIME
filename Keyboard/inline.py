@@ -1,5 +1,5 @@
 from gc import callbacks
-
+from services.dialogs import PERSONS
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 def info_inline():
@@ -71,3 +71,12 @@ def fact_again():
     ]
     keyboard=InlineKeyboardMarkup(inline_keyboard=kb_list)
     return keyboard
+
+
+def get_persons_keyboard():
+    kb_list=InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=name,callback_data=f'select_persons:{name}')]
+        for name in PERSONS
+    ]
+    )
+    return kb_list

@@ -27,3 +27,6 @@ class Calcs_kraft_pro_matt(StatesGroup):
 
 class Calcs_Durata(StatesGroup):
     waiting = State()
+
+class MessagesPersona(StatesGroup):
+    message = State()
