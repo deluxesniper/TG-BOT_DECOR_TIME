@@ -194,12 +194,12 @@ async def create_payment_handler(message: Message, state: FSMContext):
 
     preview_text = (
         "📋 Предпросмотр объявления:\n\n"
-        f"📌 Заголовок: {data.get('user_for_text', 'Не указано')}\n"
-        f"👤 Имя: {data.get('name', 'Не указано')}\n"
-        f"🎂 Возраст: {data.get('age', 'Не указано')}\n"
-        f"🏙️ Город: {data.get('city', 'Не указано')}\n"
-        f"📝 Текст: {data.get('announcement', 'Не указано')}\n"
-        f"💰 Цена: {data.get('payment', 'Не указано')}\n\n"
+        f"📌 Заголовок: {data.get('user_for_text')}\n"
+        f"👤 Имя: {data.get('name')}\n"
+        f"🎂 Возраст: {data.get('age')}\n"
+        f"🏙️ Город: {data.get('city')}\n"
+        f"📝 Текст: {data.get('announcement')}\n"
+        f"💰 Цена: {data.get('payment',)}\n\n"
         "Выберите действие:"
     )
 
@@ -213,11 +213,11 @@ async def handle_confirmation(message: Message, state: FSMContext):
         data = await state.get_data()
         message_data = {
             "user_for_text": data.get('user_for_text', 'Не указано'),
-            "name": data.get('name', 'Не указано'),
-            "age": data.get('age', 'Не указано'),
-            "city": data.get('city', 'Не указано'),
-            "announcement": data.get('announcement', 'Не указано'),
-            "payment": data.get('payment', 'Не указано'),
+            "name": data.get('name'),
+            "age": data.get('age'),
+            "city": data.get('city'),
+            "announcement": data.get('announcement'),
+            "payment": data.get('payment')
 
         }
         save_message(message_data)
@@ -233,18 +233,8 @@ async def handle_invalid_confirmation(message: Message, state: FSMContext):
     await message.answer("Пожалуйста, выберите действие с помощью кнопок:", reply_markup=save_or_clear())
 
 
-@router.message(Create_Users_messages.confirmation)
-async def handle_invalid_confirmation(message: Message, state: FSMContext):
-    await message.answer("Пожалуйста, выберите действие с помощью кнопок:", reply_markup=save_or_clear())
+@router.callback_query(F.data=="Dialog")
+async def talk_dialog(message: Message, state: FSMContext):
+    await message.answer("<UNK> <UNK> <UNK> <UNK> <UNK>")
 
-@router.message(F.photo)
-async def photo(message:Message):
-    await message.answer(f"Я получил от вас фотографию")
-img = FSInputFile('media/img')
-
-
-
-@router.message(F.voice)
-async def voice(message:Message):
-    await message.answer(f" Вы отправили Голосовое сообщение")
 
