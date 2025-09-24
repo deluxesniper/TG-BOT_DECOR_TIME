@@ -248,3 +248,4 @@ async def select_persons_handler(call: CallbackQuery):
     await call.answer()
 
 
+п
