@@ -1,0 +1,18 @@
+[
+    {
+        "user_for_text": "продам ps4",
+        "name": "тимур",
+        "age": "32",
+        "city": "москва",
+        "announcement": "продам ps 4 pro",
+        "payment": "25000"
+    },
+    {
+        "user_for_text": "1",
+        "name": "2",
+        "age": "3",
+        "city": "4",
+        "announcement": "5",
+        "payment": "6"
+    }
+]

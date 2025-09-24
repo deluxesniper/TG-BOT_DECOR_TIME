@@ -24,23 +24,31 @@ async def Granella_calculate(message:types.Message, state:FSMContext, Granella:f
     return result
 
 
-def save_message(my_messages):
-    save_data_folder = "json/data.json"
-
-    # Создаем папку если не существует
-    os.makedirs(os.path.dirname(save_data_folder), exist_ok=True)
+def save_message(message_data):
+    filename = "json/messages.json"
 
     try:
+        # Всегда начинаем с пустого списка если есть ошибки
+        messages = []
+
         # Пытаемся прочитать существующие данные
-        with open(save_data_folder, mode='r', encoding='utf-8') as f:
-            save_message = json.load(f)
-    except FileNotFoundError:
-        # Если файл не найден, начинаем с пустого списка
-        save_message = []
+        if os.path.exists(filename):
+            with open(filename, 'r', encoding='utf-8') as f:
+                content = f.read().strip()
+                if content:  # Если файл не пустой
+                    messages = json.loads(content)
 
-    # Добавляем новое сообщение
-    save_message.append(my_messages)
+        # Добавляем новое сообщение (структурированные данные)
+        messages.append(message_data)
 
-    # Записываем обратно
-    with open(save_data_folder, mode='w', encoding='utf-8') as f:
-        json.dump(save_message, f, ensure_ascii=False, indent=4)
+        # Сохраняем обратно
+        with open(filename, 'w', encoding='utf-8') as f:
+            json.dump(messages, f, ensure_ascii=False, indent=4)
+
+    except Exception as e:
+        print(f"Ошибка при сохранении: {e}")
+        # Создаем файл с одним сообщением
+        with open(filename, 'w', encoding='utf-8') as f:
+            json.dump([message_data], f, ensure_ascii=False, indent=4)
+
+

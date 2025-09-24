@@ -1,4 +1,4 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton,ReplyKeyboardRemove
 
 def menu():
     kb_list=[
@@ -32,5 +32,20 @@ def my_advertisement():
         keyboard=kb_list,
         resize_keyboard=True,
         one_time_keyboard=True
+    )
+    return keyboard
+
+
+
+def save_or_clear():
+    kb_list = [
+        [KeyboardButton(text="Сохранить"),
+         KeyboardButton(text="Не сохранять")],
+    ]
+    keyboard = ReplyKeyboardMarkup(
+        keyboard=kb_list,
+        resize_keyboard=True,
+        one_time_keyboard=True
+
     )
     return keyboard

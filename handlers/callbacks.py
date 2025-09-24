@@ -3,9 +3,9 @@ from gc import callbacks
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram import F, Router
-from aiogram.types import CallbackQuery, Message, FSInputFile
+from aiogram.types import CallbackQuery, Message, FSInputFile, ReplyKeyboardRemove
 from Keyboard.inline import info_company, info_stor,fact_again,paint_to_calculate
-from Keyboard.reply import under_the_menu,my_advertisement
+from Keyboard.reply import under_the_menu, my_advertisement, save_or_clear
 from services.gpt_random_fact import get_fact
 from services.json import save_advertisement
 from stor.contacts import XL_city, XL_email, XL_phone,XL_opening_hours,XL_address
@@ -143,23 +143,22 @@ async def menu_handler(message: Message):
 @router.message(F.text =="Создать Объявление")
 async def zagolovok(message: Message,state: FSMContext):
     await state.set_state(Create_Users_messages.user_for_text)
-    await state.update_data(zagalovok=message.text)
     await message.answer( "Отлично! Давайте создадим объявление.\n\n"
-        "📌 Шаг 1 из 6: Введите заголовок объявления:",)
+        "📌 Шаг 1 из 6: Введите заголовок объявления:")
 
 
 
 
 @router.message(Create_Users_messages.user_for_text,F.text)
 async def create_user_handler(message: Message,state: FSMContext):
-    await state.update_data(name=message.text)
+    await state.update_data(user_for_text=message.text)
     await state.set_state(Create_Users_messages.name)
     await message.answer("📝 Шаг 2 из 6: напишите ваше имя:" )
 
 
 @router.message(Create_Users_messages.name,F.text)
 async def create_name_handler(message: Message,state: FSMContext):
-    await state.update_data(age=message.text)
+    await state.update_data(name=message.text)
     await state.set_state(Create_Users_messages.age)
     await  message.answer("📝Шаг 3 из 6: напишите ваш возраст ")
 
@@ -167,64 +166,76 @@ async def create_name_handler(message: Message,state: FSMContext):
 
 @router.message(Create_Users_messages.age,F.text)
 async def create_age_handler(message: Message,state: FSMContext):
-    await state.update_data(city=message.text)
+    await state.update_data(age=message.text)
     await state.set_state(Create_Users_messages.city)
     await  message.answer("📝Шаг 4 из 6: напишите ваш город ")
 
 
 @router.message(Create_Users_messages.city,F.text)
 async def create_city_handler(message: Message,state: FSMContext):
-    await state.update_data(announcement=message.text)
+    await state.update_data(city=message.text)
     await state.set_state(Create_Users_messages.announcement)
     await message.answer("📝Шаг 5 из 6: напишите текст объявления")
 
 
 
-
-@router.message(Create_Users_messages.announcement,F.text)
-async def create_payment_handler(message: Message,state: FSMContext):
-    await state.update_data(payment=message.text)
+# Шаг 6: Сохраняем текст объявления и запрашиваем цену
+@router.message(Create_Users_messages.announcement, F.text)
+async def create_announcement_handler(message: Message, state: FSMContext):
+    await state.update_data(announcement=message.text)  # ✅
     await state.set_state(Create_Users_messages.payment)
-    await message.answer("📝Шаг 6 из 6: напишите вашу цену")
+    await message.answer("📝 Шаг 6 из 6: напишите вашу цену")
 
 
-@router.message(Create_Users_messages.payment,F.text)
-async def create_Send_messages_handler(message: Message,state: FSMContext):
-    data= await state.get_data()
-    my_advertisement={
-         "user_id": message.from_user.id,
-        "username": message.from_user.username,
-        "zagolovok":data["zagalovok"],
-        "name": data['name'],
-        "age": data['age'],
-        "city": data['city'],
-        "announcement": data['announcement'],
-        "payment": data['payment'],
-    }
-    save_message(my_advertisement)
+@router.message(Create_Users_messages.payment, F.text)
+async def create_payment_handler(message: Message, state: FSMContext):
+    await state.update_data(payment=message.text)
+    data = await state.get_data()
+
+    preview_text = (
+        "📋 Предпросмотр объявления:\n\n"
+        f"📌 Заголовок: {data.get('user_for_text', 'Не указано')}\n"
+        f"👤 Имя: {data.get('name', 'Не указано')}\n"
+        f"🎂 Возраст: {data.get('age', 'Не указано')}\n"
+        f"🏙️ Город: {data.get('city', 'Не указано')}\n"
+        f"📝 Текст: {data.get('announcement', 'Не указано')}\n"
+        f"💰 Цена: {data.get('payment', 'Не указано')}\n\n"
+        "Выберите действие:"
+    )
+
+    await state.set_state(Create_Users_messages.confirmation)
+    await message.answer(preview_text, reply_markup=save_or_clear())
+
+
+@router.message(Create_Users_messages.confirmation, F.text.in_(["Сохранить", "Не сохранять"]))
+async def handle_confirmation(message: Message, state: FSMContext):
+    if message.text == "Сохранить":
+        data = await state.get_data()
+        message_data = {
+            "user_for_text": data.get('user_for_text', 'Не указано'),
+            "name": data.get('name', 'Не указано'),
+            "age": data.get('age', 'Не указано'),
+            "city": data.get('city', 'Не указано'),
+            "announcement": data.get('announcement', 'Не указано'),
+            "payment": data.get('payment', 'Не указано'),
+
+        }
+        save_message(message_data)
+        await message.answer("✅ Объявление успешно сохранено!", reply_markup=under_the_menu())
+    else:
+        await message.answer("❌ Создание объявления отменено.", reply_markup=under_the_menu())
+
     await state.clear()
 
-    ad_text=f"""
 
-    ✅ Объявление
-    успешно
-    создано!
+@router.message(Create_Users_messages.confirmation)
+async def handle_invalid_confirmation(message: Message, state: FSMContext):
+    await message.answer("Пожалуйста, выберите действие с помощью кнопок:", reply_markup=save_or_clear())
 
-    Заголовок: {my_advertisement['zagolovok']}
-    Имя: {my_advertisement['name']}
-    Возраст: {my_advertisement['age']}
-    Город: {my_advertisement['city']}
-    Описание: {my_advertisement['announcement']}
-    Цена: {my_advertisement['payment']}
-    
 
-    Объявление
-    сохранено
-    в
-    базе!
-    """
-    await message.answer(ad_text)
-
+@router.message(Create_Users_messages.confirmation)
+async def handle_invalid_confirmation(message: Message, state: FSMContext):
+    await message.answer("Пожалуйста, выберите действие с помощью кнопок:", reply_markup=save_or_clear())
 
 @router.message(F.photo)
 async def photo(message:Message):

@@ -8,6 +8,7 @@ class Create_Users_messages(StatesGroup):
     city = State()
     announcement =State()
     payment = State()
+    confirmation = State()
 
 
 class Calcs_adhesive(StatesGroup):
