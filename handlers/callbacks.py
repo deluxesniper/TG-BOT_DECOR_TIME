@@ -1,5 +1,6 @@
 from gc import callbacks
 
+from aiogram.fsm import state
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram import F, Router
@@ -12,7 +13,7 @@ from stor.contacts import XL_city, XL_email, XL_phone,XL_opening_hours,XL_addres
 from services.variable import save_message, load_messages
 class AdvertisementStates(StatesGroup):
     waiting_for_text = State()
-from handlers.states import Calcs_adhesive, Calcs_granella, Calcs_kraft_pro_matt, Calcs_Durata, Create_Users_messages
+from handlers.states import Calcs_adhesive, Calcs_granella, Calcs_kraft_pro_matt, Calcs_Durata, Create_Users_messages, MessagesPersona
 
 router = Router()
 ###____ КОД для Inlane кeyboards  расчета
@@ -293,10 +294,16 @@ async def talk_dialog(call: CallbackQuery, state: FSMContext):
 
 
 @router.callback_query(F.data.startswith('select_persons:'))
-async def select_persons_handler(call: CallbackQuery):
-    select_persons=call.data.split(":")[1]
-    dialogis[call.message.from_user.id] = [{'role':'system','content':PERSONS[select_persons]}]
-    await call.message.answer(f'Ты выбрал {select_persons} можешь пообщатся с ним')
-    await call.answer()
+async def select_persons_handler(call: CallbackQuery,state: FSMContext):
+    select_persons=call.data.split(":")[-1]
+    # Инициализируем историю
+    dialogis[call.from_user.id] = {
+        'persona': PERSONS[select_persons],
+        'messages': []
+    }
+    print(dialogis)
+    await call.message.answer(f'Ты выбрал {select_persons}. Можешь пообщаться с ним')
+    await state.set_state(MessagesPersona.message)
+
 
 

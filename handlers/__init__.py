@@ -1,7 +1,8 @@
 from aiogram import  Router
 from .commands import router as start_router
 from .callbacks import router as callbacks_router
+from .states import router as state_router
 
 router = Router()
 
-router.include_routers(start_router, callbacks_router)
+router.include_routers(start_router, callbacks_router, state_router)

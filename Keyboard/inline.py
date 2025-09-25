@@ -104,3 +104,11 @@ def get_persons_keyboard():
     ]
     )
     return kb_list
+
+def close_keyboard():
+    kb_list=InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text='Закончить',callback_data='close')
+        ]
+    ])
+    return kb_list

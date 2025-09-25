@@ -1,5 +1,12 @@
+from aiogram import Router
+from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
+from aiogram.types import Message
+from services.dialogs import ask_role_gpt, dialogis
 
+
+
+router=Router()
 
 class Create_Users_messages(StatesGroup):
     user_for_text = State()
@@ -30,3 +37,10 @@ class Calcs_Durata(StatesGroup):
 
 class MessagesPersona(StatesGroup):
     message = State()
+
+
+@router.message(MessagesPersona.message)
+async def messages_persona_handler(message:Message):
+    answer=await ask_role_gpt(message.from_user.id,message.text)
+    persona = dialogis[message.from_user.id]['persona']
+    await message.answer(f'{answer} отвечает ')
