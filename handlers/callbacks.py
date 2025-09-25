@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram import F, Router
 from aiogram.types import CallbackQuery, Message, FSInputFile, ReplyKeyboardRemove
-from Keyboard.inline import info_company, info_stor,fact_again,paint_to_calculate,get_persons_keyboard
+from Keyboard.inline import info_company, info_stor, fact_again, paint_to_calculate, get_persons_keyboard, down_qwize
 from Keyboard.reply import under_the_menu, my_advertisement, save_or_clear
 from services.dialogs import dialogis, PERSONS
 from services.gpt_random_fact import get_fact
@@ -305,5 +305,15 @@ async def select_persons_handler(call: CallbackQuery,state: FSMContext):
     await call.message.answer(f'Ты выбрал {select_persons}. Можешь пообщаться с ним')
     await state.set_state(MessagesPersona.message)
 
+
+
+@router.callback_query(F.data.startswith('close'))
+async def close_handler(call: CallbackQuery, state: FSMContext):
+    await state.clear()
+
+
+@router.callback_query(F.text=="Qwize")
+async def qwize_handler( message: Message):
+    await message.answer('Выбери тему для квиза', reply_markup=down_qwize())
 
 

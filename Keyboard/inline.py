@@ -105,10 +105,23 @@ def get_persons_keyboard():
     )
     return kb_list
 
-def close_keyboard():
+def close():
     kb_list=InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(text='Закончить',callback_data='close')
         ]
     ])
+    return kb_list
+
+
+
+def down_qwize():
+    kb_list=InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text='IT',callback_data='quize:it'),
+            InlineKeyboardButton(text='Music',callback_data='qwize:music'),
+            InlineKeyboardButton(text='Films',callback_data='qwize:films')
+        ]
+    ]
+    )
     return kb_list

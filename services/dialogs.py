@@ -1,6 +1,5 @@
 from openai import AsyncOpenAI
 from configs.config import OpenAI_KEY
-
 client = AsyncOpenAI(api_key=OpenAI_KEY)
 
 

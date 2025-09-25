@@ -1,7 +1,9 @@
 from aiogram import Router
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from aiogram.types import Message
+from aiogram.types import Message, InlineKeyboardMarkup
+
+from Keyboard.inline import close
 from services.dialogs import ask_role_gpt, dialogis
 
 
@@ -43,4 +45,4 @@ class MessagesPersona(StatesGroup):
 async def messages_persona_handler(message:Message):
     answer=await ask_role_gpt(message.from_user.id,message.text)
     persona = dialogis[message.from_user.id]['persona']
-    await message.answer(f'{answer} отвечает ')
+    await message.answer(f'{answer}', reply_markup=close())

@@ -1,14 +1,24 @@
-from http.client import responses
-
-from openai import OpenAI
-
-from services.gpt_random_fact import client
+from openai import AsyncOpenAI
+from configs.config import OpenAI_KEY
 
 
-async def get_qwize():
-    responses=client.chat.completions.create(
+
+client = AsyncOpenAI(api_key=OpenAI_KEY)
+
+async def get_qwize(topic:str)->str:
+    responses=await client.chat.completions.create(
         model="gpt-5-nano",
         messages=[
-            {"role":"system", "content":"Давай с тобой поиграем в игру Квиз"},
-            {'role': 'user', 'content': 'Факт как появились краски на земле и где они сначала использовались'}
+            {"role":"system", "content":f'Сгенирируй вопрос по теме {topic}'}]
     )
+    return responses.choices[0].message.content
+
+
+
+async def chek_answer(question:str,answer:str)->str:
+    responses = await client.chat.completions.create(
+        model="gpt-5-nano",
+        messages=[
+            {"role": "system", "content": f'Проверь правильность ответна на Qwize. Вопрос {question} Ответ {answer}. Скажи "правильно" или "не правильно"'}]
+    )
+    return responses.choices[0].message.content
