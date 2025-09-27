@@ -5,15 +5,19 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram import F, Router
 from aiogram.types import CallbackQuery, Message, FSInputFile, ReplyKeyboardRemove
-from Keyboard.inline import info_company, info_stor, fact_again, paint_to_calculate, get_persons_keyboard, down_qwize
+from Keyboard.inline import info_company, info_stor, fact_again, paint_to_calculate, get_persons_keyboard, \
+    topic_keyboard, movie_menu, recommendation_move
 from Keyboard.reply import under_the_menu, my_advertisement, save_or_clear
+from services.Qwize import get_quiz_question, get_score
 from services.dialogs import dialogis, PERSONS
 from services.gpt_random_fact import get_fact
+from services.recomindations import recommendations_move
 from stor.contacts import XL_city, XL_email, XL_phone,XL_opening_hours,XL_address
 from services.variable import save_message, load_messages
 class AdvertisementStates(StatesGroup):
     waiting_for_text = State()
-from handlers.states import Calcs_adhesive, Calcs_granella, Calcs_kraft_pro_matt, Calcs_Durata, Create_Users_messages, MessagesPersona
+from handlers.states import Calcs_adhesive, Calcs_granella, Calcs_kraft_pro_matt, Calcs_Durata, Create_Users_messages, \
+    MessagesPersona, QuizStates,  Move
 
 router = Router()
 ###____ КОД для Inlane кeyboards  расчета
@@ -312,8 +316,78 @@ async def close_handler(call: CallbackQuery, state: FSMContext):
     await state.clear()
 
 
-@router.callback_query(F.text=="Qwize")
-async def qwize_handler( message: Message):
-    await message.answer('Выбери тему для квиза', reply_markup=down_qwize())
+@router.callback_query(F.data=="Qwize")
+async def qwize_handler( call:CallbackQuery):
+    await call.message.answer('Выбери тему для квиза', reply_markup=topic_keyboard())
+    await call.answer()  # Подтверждаем обработку callback
 
 
+
+@router.callback_query(F.data.startswith('topic:'))
+async def close_mode_handler(call: CallbackQuery, state: FSMContext):
+    await call.answer('Сейчас задам вопрос', show_alert=True)
+    topic = call.data.split(':')[-1]
+    question = await get_quiz_question(topic)
+    await state.update_data(question=question)
+    await state.update_data(topic=topic)
+    await state.set_state(QuizStates.waiting_answer)
+    await call.message.answer(f'Тема: {topic}\n\n{question}\nМожешь ответить на вопрос.')
+
+
+@router.callback_query(F.data == 'next_question')
+async def next_quiz_qestion_handler(call: CallbackQuery, state: FSMContext):
+    await call.answer('Сейчас задам вопрос', show_alert=True)
+    data = await state.get_data()
+    topic = data.get('topic')
+    question = await get_quiz_question(topic)
+    await call.message.answer(f'Продолжаем по теме: {topic}\n\n{question}')
+    await state.set_state(QuizStates.waiting_answer)
+
+
+@router.callback_query(F.data == 'change_topic')
+async def next_quiz_question_handler(call: CallbackQuery):
+    await call.message.answer('Выбери новую тему', reply_markup=topic_keyboard())
+
+
+@router.callback_query(F.data == 'end_quiz')
+async def next_quiz_qestion_handler(call: CallbackQuery, state: FSMContext):
+    score = await get_score(state)
+    await state.clear()
+    await call.message.answer(f'🎬 Квиз завершен! Твйо итоговый счет: {score}')
+
+
+
+@router.callback_query(F.data == 'Recommendations')
+async def genre_handler( call:CallbackQuery):
+    await call.message.answer('Выбери Жанр', reply_markup=movie_menu())
+    await call.answer()
+
+@router.callback_query(F.data.startswith('films:'))
+async def movie_handler(call: CallbackQuery, state: FSMContext):
+    rem = call.data.split(":")[-1]
+    await call.answer('Сейчас подскажу 5 лучших фильмов по жанру', show_alert=True)
+    films= await recommendations_move(rem)
+    await state.update_data(films=films)
+    await state.set_state(Move.fedback_waiting)
+    await call.message.answer(f'🎬 Рекомендации по жанру "{rem}":\n\n{films}',reply_markup=recommendation_move())
+
+
+@router.callback_query(F.data == 'dislike_recommendation')
+async def dislike_recommendation_handler(call: CallbackQuery, state: FSMContext):
+    await call.answer('Ищу другие варианты...', show_alert=True)
+    data = await state.get_data()
+    genre = data.get('films')
+    # Генерируем новые рекомендации
+    new_recommendations = await recommendations_move(genre)
+    await call.message.edit_text(f'🎬 Новые рекомендации по жанру "{genre}":\n\n{new_recommendations}',reply_markup=recommendation_move())
+
+
+@router.callback_query(F.data == 'change_genre')
+async def change_genre_handler(call: CallbackQuery, state: FSMContext):
+    await state.clear()
+    await call.message.answer('Выбери новый жанр фильмов', reply_markup=movie_menu())
+
+@router.callback_query(F.data == 'end_recommendations')
+async def end_recommendations_handler(call: CallbackQuery, state: FSMContext):
+    await state.clear()
+    await call.message.answer('🎬 Рекомендации завершены! Надеюсь, ты нашел что-то интересное!')

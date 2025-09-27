@@ -20,7 +20,11 @@ def info_inline():
         [
             InlineKeyboardButton(text="Игра|Qwize",callback_data='Qwize'),
             InlineKeyboardButton(text="Диалог с личностью",callback_data='Dialog'),
-        ]
+        ],
+            [
+                InlineKeyboardButton(text="Рекоминдации по фильмам",callback_data="Recommendations"),
+                InlineKeyboardButton(text="Переводчик",callback_data='language'),
+            ]
 
         ]
 
@@ -115,13 +119,43 @@ def close():
 
 
 
-def down_qwize():
-    kb_list=InlineKeyboardMarkup(inline_keyboard=[
-        [
-            InlineKeyboardButton(text='IT',callback_data='quize:it'),
-            InlineKeyboardButton(text='Music',callback_data='qwize:music'),
-            InlineKeyboardButton(text='Films',callback_data='qwize:films')
+def topic_keyboard():
+    kb = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text='История', callback_data='topic:history')],
+            [InlineKeyboardButton(text='Наука', callback_data='topic:science')],
+            [InlineKeyboardButton(text='IT', callback_data='topic:it')],
         ]
-    ]
+    )
+    return kb
+
+def quiz_answers():
+    Kb_List = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text='Еще вопрос', callback_data='next_question')],
+            [InlineKeyboardButton(text='Сменить тему', callback_data='change_topic')],
+            [InlineKeyboardButton(text='Закончить', callback_data='end_quiz')],
+        ]
+    )
+    return Kb_List
+
+
+def movie_menu():
+    kb_list=InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text='Ужасы', callback_data='films:horror')],
+            [InlineKeyboardButton(text='Комедия', callback_data='films:comedy')],
+            [InlineKeyboardButton(text='Боевик', callback_data='films:action')],
+        ]
     )
     return kb_list
+
+def recommendation_move():
+    kb = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text='Не нравится', callback_data='dislike_recommendation')],
+            [InlineKeyboardButton(text='Сменить жанр', callback_data='change_genre')],
+            [InlineKeyboardButton(text='Закончить', callback_data='end_recommendations')],
+        ]
+    )
+    return kb
